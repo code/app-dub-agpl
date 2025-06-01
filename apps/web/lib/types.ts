@@ -53,6 +53,7 @@ import {
   PayoutResponseSchema,
   PayoutSchema,
 } from "./zod/schemas/payouts";
+import { programLanderSchema } from "./zod/schemas/program-lander";
 import { programDataSchema } from "./zod/schemas/program-onboarding";
 import {
   PartnerProgramInviteSchema,
@@ -61,6 +62,7 @@ import {
   ProgramMetricsSchema,
   ProgramPartnerLinkSchema,
   ProgramSchema,
+  ProgramWithLanderDataSchema,
 } from "./zod/schemas/programs";
 import { RewardSchema } from "./zod/schemas/rewards";
 import {
@@ -402,6 +404,12 @@ export type DiscountProps = z.infer<typeof DiscountSchema>;
 
 export type ProgramProps = z.infer<typeof ProgramSchema>;
 
+export type ProgramLanderData = z.infer<typeof programLanderSchema>;
+
+export type ProgramWithLanderDataProps = z.infer<
+  typeof ProgramWithLanderDataSchema
+>;
+
 export type ProgramInviteProps = z.infer<typeof ProgramInviteSchema>;
 
 export type PartnerProgramInviteProps = z.infer<
@@ -454,10 +462,7 @@ export type FolderWithPermissions = {
   permissions: FolderPermission[];
 };
 
-export type FolderSummary = Pick<
-  Folder,
-  "id" | "name" | "accessLevel" | "linkCount"
->;
+export type FolderSummary = Pick<Folder, "id" | "name" | "accessLevel">;
 
 // Rewards
 
