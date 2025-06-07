@@ -14,7 +14,6 @@ import { ProgramEnrollmentSchema } from "./programs";
 import { parseUrlSchema } from "./utils";
 
 export const PARTNERS_MAX_PAGE_SIZE = 100;
-export const PAYOUTS_MAX_PAGE_SIZE = 100;
 
 export const exportPartnerColumns = [
   { id: "id", label: "ID", default: true },
@@ -245,8 +244,11 @@ export const EnrolledPartnerSchema = PartnerSchema.pick({
       .number()
       .default(0)
       .describe(
-        "The total earnings/commissions accrued by the partner's links.",
-      ),
+        "DEPRECATED: The total earnings/commissions accrued by the partner's links.",
+      )
+      .openapi({
+        deprecated: true,
+      }),
   })
   .extend({
     applicationId: z
@@ -517,17 +519,6 @@ export const invitePartnerSchema = z.object({
   discountId: z.string().optional(),
 });
 
-export const banPartnerSchema = z.object({
-  workspaceId: z.string(),
-  partnerId: z.string(),
-  reason: z.enum(
-    Object.keys(BAN_PARTNER_REASONS) as [
-      PartnerBannedReason,
-      ...PartnerBannedReason[],
-    ],
-  ),
-});
-
 export const approvePartnerSchema = z.object({
   workspaceId: z.string(),
   partnerId: z.string(),
@@ -548,3 +539,19 @@ export const retrievePartnerLinksSchema = z
       path: [],
     },
   );
+
+export const banPartnerSchema = z.object({
+  workspaceId: z.string(),
+  partnerId: z.string(),
+  reason: z.enum(
+    Object.keys(BAN_PARTNER_REASONS) as [
+      PartnerBannedReason,
+      ...PartnerBannedReason[],
+    ],
+  ),
+});
+
+export const archivePartnerSchema = z.object({
+  workspaceId: z.string(),
+  partnerId: z.string(),
+});
