@@ -13,17 +13,26 @@ import { cn } from "@dub/utils";
 import { LogOut } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { ComponentPropsWithoutRef, ElementType, useState } from "react";
+import {
+  ComponentPropsWithoutRef,
+  ElementType,
+  useEffect,
+  useState,
+} from "react";
 
 export default function UserDropdown() {
   const { data: session } = useSession();
   const { partner } = usePartnerProfile();
   const [openPopover, setOpenPopover] = useState(false);
+  const [isPartnerPage, setIsPartnerPage] = useState(false);
+  useEffect(() => {
+    setIsPartnerPage(window.location.hostname.startsWith("partners."));
+  }, []);
 
   return (
     <Popover
       content={
-        <div className="flex w-full flex-col space-y-px rounded-md bg-white p-2">
+        <div className="flex w-full flex-col space-y-px rounded-md bg-white p-2 sm:min-w-56">
           {session?.user ? (
             <div className="p-2">
               <p className="truncate text-sm font-medium text-neutral-900">
@@ -46,25 +55,29 @@ export default function UserDropdown() {
             href="/account/settings"
             onClick={() => setOpenPopover(false)}
           />
-          <UserOption
-            as={Link}
-            label="Refer and earn"
-            icon={Gift}
-            href="/account/settings/referrals"
-            onClick={() => setOpenPopover(false)}
-          />
-          {partner && (
-            <UserOption
-              as={Link}
-              label="Switch to partner account"
-              icon={ArrowsOppositeDirectionX}
-              href="https://partners.dub.co"
-            />
-          )}
+          {...!isPartnerPage
+            ? [
+                <UserOption
+                  as={Link}
+                  label="Refer and earn"
+                  icon={Gift}
+                  href="/account/settings/referrals"
+                  onClick={() => setOpenPopover(false)}
+                />,
+                partner ? (
+                  <UserOption
+                    as={Link}
+                    label="Switch to partner account"
+                    icon={ArrowsOppositeDirectionX}
+                    href="https://partners.dub.co"
+                  />
+                ) : null,
+              ].filter(Boolean)
+            : []}
           <UserOption
             as="button"
             type="button"
-            label="Logout"
+            label="Log out"
             icon={LogOut}
             onClick={() =>
               signOut({
@@ -81,17 +94,18 @@ export default function UserDropdown() {
       <button
         onClick={() => setOpenPopover(!openPopover)}
         className={cn(
-          "group relative rounded-full ring-offset-1 ring-offset-neutral-100 transition-all hover:ring-2 hover:ring-black/10 active:ring-black/15 data-[state='open']:ring-black/15",
+          "group relative flex size-11 items-center justify-center rounded-lg transition-all",
+          "hover:bg-bg-inverted/5 active:bg-bg-inverted/10 data-[state=open]:bg-bg-inverted/10 transition-colors duration-150",
           "outline-none focus-visible:ring-2 focus-visible:ring-black/50",
         )}
       >
         {session?.user ? (
           <Avatar
             user={session.user}
-            className="size-6 border-none duration-75 sm:size-6"
+            className="size-7 border-none duration-75 sm:size-7"
           />
         ) : (
-          <div className="size-6 animate-pulse rounded-full bg-neutral-100 sm:size-6" />
+          <div className="size-7 animate-pulse rounded-full bg-neutral-100" />
         )}
       </button>
     </Popover>
